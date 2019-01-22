@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-control" content="public" max-age="86400">
+    <meta name="author" content="Daniel Tompkins">
+    <meta name="description" content="This is a coding challenge for my application to NetBeez. It is almost all original, with a little boilerplate grid from a p5.js library example. I've never used p5.js before, but this was a fun introduction!">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="assets/css/styles.css" />
+  </head>
+  <body>
+  // Load in JQuery / Bootstrap / p5 ==== CDNs
+  <script
+    src="https://code.jquery.com/jquery-3.3.1.min.js"
+    integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+    crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.3/p5.js"></script>
+
+  // Start of main code
+  <script type="text/javascript">
+  var input; // empty var for input values
+  var dims; // dimensions for grid
+  var xInit; // initial x coordinates
+  var yInit; // initial y coordinates
+  var directions; // directions to get to the destination square
+  var w; // column width
+  var columns; // var for holding column number
+  var rows; // var for holding row number
+  var canvas; // var for holding matrix
+  var coordX = xInit; // new coordinate variables --> X
+  var coordY = yInit; // Y
+
+  // Get initial window dimmensions
+  var widthW = window.innerWidth - 25;
+  var heightW = window.innerHeight - 25;
+
+  // Reload page on resize
+  $(window).resize(function(){location.reload();});
+
+  // Get input values from front end form and debug formatting
+  function getInput() {
+    input = $('#input').val();
+    // get rid of parentheses
+    input = input.slice(1,-1);
+    // split variables by comma
+    var inputArray = input.split(",");
+    // remove any whitespace surround each item
+    inputArray.forEach(function(e){
+      e.trim();
+    });
+    dims = parseInt(inputArray[0]); 
+    xInit = parseInt(inputArray[1]);
+    yInit = parseInt(inputArray[2]);
+    directions = inputArray[3];
+    // remove quoates from directions string and split into array of characters
+    directions = directions.replace(/['"]+/g, '').split('');
+    // console.log(dims, xInit, yInit, directions);
+    // Setup Drawing
+    setup();
+  }
+
+  function setup() {   
+    // Initial canvas creation
+    createCanvas(widthW, heightW);
+    // Calculate columns and rows for 1:1 aspect square grid
+    if (width > height) {
+      w = height/dims;
+      columns = floor(height/w);
+      rows = floor(height/w);
+    } else {
+      w = width/dims;
+      columns = floor(width/w);
+      rows = floor(width/w);
+    }
+    // console.log(canvas, columns, rows);
+    // Initial a 2D array
+    canvas = new Array(columns);
+    for (var i = 0; i < columns; i++) {
+      canvas[i] = new Array(rows);
+    } 
+    init();
+  }
+
+  // Main drawing function, draws boxes in the grid and text label
+  function draw() {
+    for (var i = 0;i < columns;i++) {
+      for (var j = 0;j < rows;j++) {
+	if ((canvas[i][j] == 1)) {
+	  fill(0);
+	  rect(i*w, j*w, w-1, w-1);
+	  coordX = j;
+	  coordY = i;
+	  fill(255);
+	  textSize(w/5);
+	  text("[" + coordX + ", " + coordY + "]", i*w+w/3.5, j*w+w/1.85);
+
+/*===========================================================*/
+/* THIS IS THE CONSOLE LOG FOR THE CODING CHALLENGE'S OUTPUT */
+/*===========================================================*/
+          var output = ("[" + coordX + ", " + coordY + "]");
+	  console.log(output);
+/*===========================================================*/
+
+	// populate blank squares	
+	} else {
+	  fill(255); 
+          stroke(0);
+          rect(i*w, j*w, w-1, w-1);
+        }  
+      }
+    }
+  }
+
+  // Function for reading directions to destination square
+  function moveBox() {
+    directions.forEach(function(e) {
+      for (var i = 0;i < columns;i++) {
+        for (var j = 0;j < rows;j++) {
+          if (canvas[i][j] === 1) {
+	    canvas[i][j] = 0;
+            console.log(directions, i, j);
+	    if (e == "L") {
+              if (i == 0) {
+		return canvas[columns-1][j] = 1;
+	      } else {
+		return canvas[i-1][j] = 1;
+              }
+            } else if (e === "R") {
+	      if (i == columns-1) {
+                return canvas[0][j] = 1;
+	      } else {
+	        return canvas[i+1][j] = 1;
+	      }
+	    } else if (e === "D") {
+              if (j == rows-1) {
+		return canvas[i][j] = 1;
+	      } else {
+	        return canvas[i][j+1] = 1;
+	      }
+	    } else if (e === "U") {
+              if (j == 0) {
+                return canvas[i][j] = 1;
+	      } else {
+                return canvas[i][j-1] = 1;
+	      }
+	    }
+	  }
+	}
+      }
+    });
+    draw();
+  }
+
+/* Keyboard controls to move square infinitely horizontally or
+   within the grid's bounds vertically. I had this working; but
+   it needs a little work to re-implement. Can't just uncomment. */
+
+/*
+  function keyPressed() {
+    for (var i = 0;i < columns;i++) {
+      for (var j = 0;j < rows;j++) {
+        if (canvas[i][j] === 1) {
+          canvas[i][j] = 0;
+ 	  if (keyCode === LEFT_ARROW) {
+            if (i == 0) {
+	      return canvas[columns-1][j] = 1;
+	    } else {
+              return canvas[i-1][j] = 1;
+            }
+          } else if (keyCode === RIGHT_ARROW) {
+	    if (i == columns-1) {
+              return canvas[0][j] = 1;
+	    } else {
+	      return canvas[i+1][j] = 1;
+	    }
+	  } else if (keyCode === DOWN_ARROW) {
+            if (j == rows-1) {
+	      return canvas[i][j] = 1;
+	    } else {
+	      return canvas[i][j+1] = 1;
+	    }
+	  } else if (keyCode === UP_ARROW) {
+            if (j == 0) {
+              return canvas[i][j] = 1;
+	    } else {
+              return canvas[i][j-1] = 1;
+	    }
+	  }
+	}
+      }
+    }
+  }
+  */
+
+  // Fill canvas origin block
+  function init() {
+    for (var i = 0;i < columns;i++) {
+      for (var j = 0;j < rows;j++) {
+        // Fill origin cell
+	if (i == xInit && j == yInit) {
+          console.log('origin found');
+	  canvas[j][i] = 1;
+	}
+        // Empty the rest
+	else {
+	  canvas[i][j] = 0;
+          console.log(canvas);
+        }  
+      }
+    }
+    draw();
+    // Delay to show origin before destination
+    setTimeout(function(){
+      moveBox();
+      console.log('Origin');
+    }, 1000);
+  }
+
+  // instantiate global p5 variables
+  new p5();
+
+  </script>
+
+  <div class="col-12">
+    <div id="title">NetBeez</div>
+    <div id="name">Daniel Tompkins</div>
+    <div id="canvas">
+      <input id="input" value='(3, 0, 0, "RDD")' placeholder='(3, 0, 0, "RDD")'>
+      <button class="btn-info" type="button" onclick="getInput()">SUBMIT</button>
+    </div>
+  </div>
+</body>
+</html>
