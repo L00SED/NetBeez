@@ -12,7 +12,7 @@ NetBeez, January 2019
 Coding exercise for NetBeez Front End Engineer position.
 by Daniel Tompkins
 
-Instructions to run: go to https://l00sed.github.io/NetBeez.git/
+Instructions to run: go to https://l00sed.github.io/NetBeez/
 
 		-- or --
 
