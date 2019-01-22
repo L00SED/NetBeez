@@ -55,8 +55,13 @@
     xInit = parseInt(inputArray[1]);
     yInit = parseInt(inputArray[2]);
     directions = inputArray[3];
-    // remove quoates from directions string and split into array of characters
+    // remove quotes and spaces from directions string and split
+    // into array of characters
     directions = directions.replace(/['"]+/g, '').split('');
+    directions = directions.filter(function(value) {
+      return value !== " ";
+    });
+    console.log(directions);
     // console.log(dims, xInit, yInit, directions);
     // Setup Drawing
     setup();
@@ -215,7 +220,6 @@
     // Delay to show origin before destination
     setTimeout(function(){
       moveBox();
-      console.log('Origin');
     }, 1000);
   }
 

@@ -30,8 +30,9 @@ and you'll hopefully see the box jump to a new position displaying the coordinat
 If you'd like the raw data output, there is an active console.log on the output variables
 generating these coordinate labels. If you right-click, inspect and open the developer
 console sidebar, you should be able to see those variables output after a successful
-form submission. This was my first time using p5.js! I really enjoyed the task.
-Please let me know if you have any questions or problems with the package.
+form submission. This was my first time using p5.js! I'm still seeing a little glitchy
+behavior... but, I really enjoyed the task! Please let me know if you have any
+questions or problems with the package.
 
 Warm Regards,
 
